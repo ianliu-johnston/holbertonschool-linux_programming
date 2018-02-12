@@ -50,8 +50,6 @@ char *_getline(const int fd)
 		bytes_read = 1;
 	buf[bytes_total] = '\0';
 	index = _strcspn(buf + offset, LINE_ENDINGS);
-	if (index <= 1)
-		index = bytes_read;
 	line = malloc((index + 1) * sizeof(char));
 	line = strncpy(line, buf + offset, index);
 	line[index] = '\0';
