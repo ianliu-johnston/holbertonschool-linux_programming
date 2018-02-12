@@ -38,7 +38,7 @@ int _strcspn(char *haystack, const char *needle)
   * @fd: file descriptor to get characters from
   * Return: Malloc'd space that has the line in it.
   */
-char *_getline(int fd)
+char *_getline(const int fd)
 {
 	static char buf[READ_SIZE];
 	char *line;
