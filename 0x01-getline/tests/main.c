@@ -10,13 +10,15 @@
  *
  * Return: always 0.
  */
-int main(void)
+int main(int ac, char *argv[])
 {
     int fd;
     char *line;
 
-    fd = open("main.c", 0);
-	line = NULL;
+	if (ac != 2)
+		fd = open("main.c", 0);
+	else
+		fd = open(argv[1], 0);
     while ((line = _getline(fd)))
     {
         printf("%s\n", line);
@@ -25,3 +27,10 @@ int main(void)
     close(fd);
     return (0);
 }
+
+/*
+ * Additional tests:
+ *  Carriage Return
+ *  Vertical Tab
+ *
+ */

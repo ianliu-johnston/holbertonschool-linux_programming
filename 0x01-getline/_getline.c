@@ -15,20 +15,13 @@ int _strcspn(char *haystack, const char *needle)
 {
 	int i, j;
 
-	i = j = 0;
 
 	if (haystack == NULL || needle == NULL)
 		return (0);
-	while (needle[i] != '\0')
-	{
-		while (haystack[j] != '\0')
-		{
+	for (i = 0; needle[i] != '\0'; i++)
+		for (j = 0; haystack[j] != '\0'; j++)
 			if (needle[i] == haystack[j])
 				return (j);
-			j++;
-		}
-		i++;
-	}
 	return (0);
 }
 
@@ -57,6 +50,8 @@ char *_getline(const int fd)
 		bytes_read = 1;
 	buf[bytes_total] = '\0';
 	index = _strcspn(buf + offset, LINE_ENDINGS);
+	if (index <= 1)
+		index = bytes_read;
 	line = malloc((index + 1) * sizeof(char));
 	line = strncpy(line, buf + offset, index);
 	line[index] = '\0';
