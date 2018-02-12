@@ -48,7 +48,7 @@ char *_getline(const int fd)
 
 	if (bytes_total <= offset || bytes_total == 0)
 	{
-		bytes_read = read(fd, buf, READ_SIZE)
+		bytes_read = read(fd, buf, READ_SIZE);
 		if (bytes_read < 0)
 			memset(buf, '\0', READ_SIZE);
 		bytes_total += bytes_read;
