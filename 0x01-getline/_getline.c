@@ -1,9 +1,10 @@
-#include <fcntl.h>
 #include <stdio.h>
+
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 #include "_getline.h"
+
 /**
   * _strcspn - Get the length of a string without a set of characters
   * @haystack: string to search in
@@ -11,10 +12,9 @@
   * Return: pointer to first instance of any character
   *         in needle or NULL if not found
  **/
-int _strcspn(char *haystack, const char *needle)
+unsigned int _strcspn(char *haystack, const char *needle)
 {
-	int i, j;
-
+	unsigned int i, j;
 
 	if (haystack == NULL || needle == NULL)
 		return (0);
@@ -35,25 +35,25 @@ char *_getline(const int fd)
 {
 	static char buf[READ_SIZE];
 	char *line;
-	int index, bytes_read;
+	unsigned int index;
+	int bytes_read = 0;
 	static size_t bytes_total;
 	static size_t offset;
 
 	if (bytes_total <= offset || bytes_total == 0)
 	{
 		bytes_read = read(fd, buf, READ_SIZE);
-		if (bytes_read < 0)
+		if (bytes_read <= 0) /* if eof, zero out buffer. */
+		{
 			memset(buf, '\0', READ_SIZE);
+			return (NULL);
+		}
 		bytes_total += bytes_read;
 	}
-	else
-		bytes_read = 1;
-	buf[bytes_total] = '\0';
 	index = _strcspn(buf + offset, LINE_ENDINGS);
 	line = malloc((index + 1) * sizeof(char));
 	line = strncpy(line, buf + offset, index);
 	line[index] = '\0';
 	offset += index + 1;
-
-	return (bytes_read > 0 ? line : NULL);
+	return (line);
 }
