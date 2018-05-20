@@ -9,8 +9,8 @@ void *print_usage(void)
 	printf("Usage: hls [OPTION]... [FILE]...\nList information about the FILEs ");
 	printf("(the current directory by default).\nSort entries alphabetically if");
 	printf("none of -cftuvSUX nor --sort is specified.\n\nMandatory arguments t");
-	printf("o long options are mandatory for short options too.\n    -a, --all ");
-	printf("       do not ignore entrires starting with .\n");
+	printf("o long options are mandatory for short options too.\n	-a, --all ");
+	printf("	   do not ignore entrires starting with .\n");
 	return (NULL);
 }
 

@@ -8,15 +8,19 @@
   **/
 int main(int ac, char *argv[])
 {
-#ifndef NO_DEBUG
-	printf("~~~Entering Main~~~\n\n");
-#endif
+/*
+* #ifndef NO_DEBUG
+* printf("~~~Entering Main~~~\n\n");
+* #endif
+*/
 	if (ac == 1)
 	{
 		print_files(".");
 		return (0);
 	}
-	parse_args(ac, argv);
+	/*
+	* parse_args(ac, argv);
+	*/
 	print_files(argv[1]);
 	return (0);
 }
