@@ -25,7 +25,7 @@ int print_files(char *dirname)
 		if (read->d_name[0] == '.')
 			continue;
 		printf("%s%s", delineator, read->d_name);
-		delineator = " ";
+		delineator = "  ";
 	} while ((read = readdir(dir)) != NULL);
 	putchar('\n');
 	closedir(dir);
