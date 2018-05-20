@@ -20,13 +20,13 @@ int print_files(char *dirname)
 	dir = opendir(dirname);
 	if (dir == NULL)
 		return (DIROPENERROR);
-	read = readdir(dir);
-	do {
+	while ((read = readdir(dir)) != NULL)
+	{
 		if (read->d_name[0] == '.')
 			continue;
 		printf("%s%s", delineator, read->d_name);
 		delineator = "  ";
-	} while ((read = readdir(dir)) != NULL);
+	}
 	putchar('\n');
 	closedir(dir);
 	return (0);
