@@ -1,4 +1,5 @@
 #include "hls.h"
+#define DIROPENERROR 1
 
 /**
   * print_files - print the names of your files
@@ -15,15 +16,18 @@ int print_files(char *dirname)
 #ifndef NO_DEBUG
 	printf("~~~Inside of print_files function~~~\n");
 #endif
+	delineator = "";
 	dir = opendir(dirname);
+	if (dir == NULL)
+		return (DIROPENERROR);
 	read = readdir(dir);
-	while (read)
-	{
-		printf("%s", read->d_name);
-		read = readdir(dir);
-		delineator = read ? "  " : "\n";
-		printf("%s", delineator);
-	}
+	do {
+		if (read->d_name[0] == '.')
+			continue;
+		printf("%s%s", delineator, read->d_name);
+		delineator = " ";
+	} while ((read = readdir(dir)) != NULL);
+	putchar('\n');
 	closedir(dir);
 	return (0);
 }
