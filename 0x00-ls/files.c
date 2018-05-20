@@ -11,12 +11,10 @@ int print_files(char *dirname)
 {
 	DIR *dir;
 	struct dirent *read;
-	char *delineator;
 
 #ifndef NO_DEBUG
 	printf("~~~Inside of print_files function~~~\n");
 #endif
-	delineator = "";
 	dir = opendir(dirname);
 	if (dir == NULL)
 		return (DIROPENERROR);
@@ -24,8 +22,7 @@ int print_files(char *dirname)
 	{
 		if (read->d_name[0] == '.')
 			continue;
-		printf("%s%s", delineator, read->d_name);
-		delineator = "  ";
+		printf("%s  ", read->d_name);
 	}
 	putchar('\n');
 	closedir(dir);
