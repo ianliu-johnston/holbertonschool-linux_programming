@@ -12,7 +12,9 @@ int print_files(char *dirname)
 	struct dirent *read;
 	char *delineator;
 
-printf("~~~Inside of print_files function~~~\n");
+#ifndef NO_DEBUG
+	printf("~~~Inside of print_files function~~~\n");
+#endif
 	dir = opendir(dirname);
 	read = readdir(dir);
 	while (read)
