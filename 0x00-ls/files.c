@@ -24,5 +24,6 @@ int print_files(char *dirname)
 		delineator = read ? "  " : "\n";
 		printf("%s", delineator);
 	}
+	closedir(dir);
 	return (0);
 }
