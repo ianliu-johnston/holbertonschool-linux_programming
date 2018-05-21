@@ -38,6 +38,7 @@ typedef struct stat files_stat;
 /* Files */
 int print_files(struct stat *dirent, char *filepath);
 int print_dirs(char *dirpath);
+void print_dirents(cmd_struct *args, char *delimiter);
 
 /* Args */
 cmd_struct *parse_args(int ac, char *argv[]);
@@ -46,4 +47,10 @@ void free_cmd_struct(cmd_struct *args);
 /* Utils */
 unsigned int _strlen(char *str);
 void _bzero(void *buf, size_t n);
+
+/* Debugging fxns */
+#ifndef NO_DEBUG
+void print_cmd_struct(cmd_struct *args);
+#endif
+
 #endif

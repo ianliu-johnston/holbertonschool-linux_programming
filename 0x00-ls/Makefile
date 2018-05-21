@@ -1,5 +1,4 @@
 # Basic Makefile for hls
-# debug usage: make DEBUG=1
 
 CC=gcc
 SRC=files.c main.c parse_args.c utils.c
@@ -8,7 +7,9 @@ OBJ=$(SRC:.c=.o)
 NAME=hls
 CFLAGS=-Wall -Werror -Wextra -pedantic
 
-DEBUG=1
+DEBUG=0
+# To turn on automatic debug mode uncomment line below
+# DEBUG=1
 ifeq ($(DEBUG),1)
 	SRC += debugging_fxns.c
 	CFLAGS += -g

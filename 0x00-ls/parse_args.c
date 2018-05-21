@@ -40,7 +40,6 @@ int validate_flags(char *flag)
 		for (j = 0; valid_flags[j] != '\0'; j++)
 			if (flag[i] == valid_flags[j])
 				continue;
-		printf("%c\n", valid_flags[j]);
 	}
 	return (TRUE);
 
@@ -83,15 +82,13 @@ cmd_struct *parse_args(int ac, char *argv[])
 {
 	int i;
 	char pwd_flag = FALSE;
+	struct stat *dirent;
 	unsigned int num_flags = 0;
 	unsigned int num_ents = 0;
+	unsigned int num_ent_zero = 0;
 
 	cmd_struct *args;
 
-#ifndef NO_DEBUG
-	printf("in cmd_struct *parse_args\n\n");
-	printf("step one: malloc\n");
-#endif
 	args = malloc(sizeof(cmd_struct));
 	if (!args)
 	{
@@ -99,9 +96,6 @@ cmd_struct *parse_args(int ac, char *argv[])
 		return (NULL);
 	}
 	_bzero(args, sizeof(cmd_struct));
-#ifndef NO_DEBUG
-	printf("step two: count args\n");
-#endif
 	for (i = 1; i < ac; i++)
 	{
 		if (argv[i][0] == '-' && argv[i][1] != '\0')
@@ -110,9 +104,6 @@ cmd_struct *parse_args(int ac, char *argv[])
 			num_ents++;
 	}
 
-#ifndef NO_DEBUG
-	printf("step three: start malloc-ing\n");
-#endif
 	if (num_flags > 0)
 	{
 		args->flags = malloc(sizeof(char *) * num_flags + 1);
@@ -139,31 +130,30 @@ cmd_struct *parse_args(int ac, char *argv[])
 	args->num_flags = num_flags;
 	args->num_ents = num_ents;
 
-#ifndef NO_DEBUG
-printf("step four: done malloc-ing\n");
-#endif
-
 	for (i = 1; i < ac; i++)
 	{
-#ifndef NO_DEBUG
-		printf("step five: start to fill_struct: %d\n", i);
-#endif
-		if (pwd_flag || (argv[i][0] != '-' && argv[i][1] != '\0'))
-		{
-			args->dirents[num_ents] = check_dirent(pwd_flag ? "." : argv[i]);
-			args->dirpaths[num_ents--] = pwd_flag ? "." : argv[i];
-		}
-		else if (argv[i][0] == '-' && argv[i][1] != '\0')
+		if (argv[i][0] == '-' && argv[i][1] != '\0')
 		{
 			validate_flags(argv[i]);
 			args->flags[num_flags--] = argv[i];
 		}
+		else
+		{
+			dirent = check_dirent(pwd_flag ? "." : argv[i]);
+			if (S_ISDIR(dirent->st_mode))
+			{
+				args->dirents[num_ents - 1] = dirent;
+				args->dirpaths[num_ents - 1] = pwd_flag ? "." : argv[i];
+				num_ents--;
+			}
+			else
+			{
+				args->dirents[num_ent_zero] = dirent;
+				args->dirpaths[num_ent_zero] = pwd_flag ? "." : argv[i];
+				num_ent_zero++;
+			}
+		}
 	}
-
-#ifndef NO_DEBUG
-	printf("args->dirpaths: %s\n", args->dirpaths[1]);
-	printf("Exiting Function\n\n");
-#endif
 	return (args);
 }
 
@@ -176,17 +166,10 @@ void free_cmd_struct(cmd_struct *args)
 {
 	struct stat *dirent;
 
-#ifndef NO_DEBUG
-	printf("\nEntering free_cmd_struct fxn\n");
-#endif
 	if (args->num_ents > 0)
 	{
 		while ((dirent = args->dirents[args->num_ents--]))
 		{
-#ifndef NO_DEBUG
-			printf("num_ents: %d\n", args->num_ents);
-			printf("dirpath: %s\n", args->dirpaths[args->num_ents]);
-#endif
 			free(dirent);
 			dirent = NULL;
 		}
@@ -195,12 +178,6 @@ void free_cmd_struct(cmd_struct *args)
 		args->dirents = NULL;
 	}
 	args->dirpaths = NULL;
-
-#ifndef NO_DEBUG
-	printf("Finished Freeing dirents\n");
-	printf("Starting to free flags\n");
-#endif
-
 	if (args->num_flags > 0)
 	{
 		free(args->flags);
@@ -208,7 +185,4 @@ void free_cmd_struct(cmd_struct *args)
 	}
 	free(args);
 	args = NULL;
-#ifndef NO_DEBUG
-	printf("Exiting free_cmd_struct Function\n\n");
-#endif
 }

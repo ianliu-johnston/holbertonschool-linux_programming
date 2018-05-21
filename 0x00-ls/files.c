@@ -10,6 +10,9 @@ int print_dirs(char *dirpath)
 	DIR *dir;
 	struct dirent *read;
 
+	if (!dirpath)
+		return (1);
+	printf("\n\n%s:\n", dirpath);
 	dir = opendir(dirpath);
 	if (dir == NULL)
 		exit(DIROPENERROR);
@@ -19,7 +22,6 @@ int print_dirs(char *dirpath)
 			continue;
 		printf("%s  ", read->d_name);
 	}
-	putchar('\n');
 	closedir(dir);
 	return (SUCCESS);
 }
@@ -32,6 +34,33 @@ int print_dirs(char *dirpath)
   **/
 int print_files(struct stat *dirent, char *filepath)
 {
-	printf("is %s a file? %d\n", filepath, S_ISDIR(dirent->st_mode));
+	printf("%s:%d", filepath, S_ISDIR(dirent->st_mode));
 	return (SUCCESS);
+}
+
+/**
+  * print_dirents - print all directory entries
+  * @args: all stats stored in memory
+  * @delimiter: what chars to print out
+  **/
+void print_dirents(cmd_struct *args, char *delimiter)
+{
+	unsigned int i;
+	struct stat *dirent;
+
+	/* struct stat tmp_swap_buf; */
+	for (i = 0; i < args->num_ents; i++)
+	{
+		dirent = args->dirents[i];
+		if (S_ISDIR(dirent->st_mode) != 0)
+		{
+			print_dirs(args->dirpaths[i]);
+		}
+		else
+		{
+			printf("%s", i == 0 ? "" : delimiter);
+			print_files(dirent, args->dirpaths[i]);
+		}
+	}
+	putchar('\n');
 }
