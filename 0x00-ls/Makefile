@@ -5,10 +5,10 @@ CC=gcc
 SRC=files.c main.c parse_args.c utils.c
 INC=hls.h error_codes.h
 OBJ=$(SRC:.c=.o)
-NAME=ls.0.1
+NAME=hls
 CFLAGS=-Wall -Werror -Wextra -pedantic
 
-DEBUG=0
+DEBUG=1
 ifeq ($(DEBUG),1)
 	SRC += debugging_fxns.c
 	CFLAGS += -g
