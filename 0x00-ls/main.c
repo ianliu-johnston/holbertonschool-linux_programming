@@ -8,11 +8,6 @@
   **/
 int main(int ac, char *argv[])
 {
-/*
-* #ifndef NO_DEBUG
-* printf("~~~Entering Main~~~\n\n");
-* #endif
-*/
 	if (ac == 1)
 	{
 		print_files(".");
