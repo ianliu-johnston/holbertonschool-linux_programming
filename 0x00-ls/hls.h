@@ -8,10 +8,42 @@
 #include <sys/types.h>
 #include <time.h>
 #include <unistd.h>
+#include "error_codes.h"
 
 #define TRUE 1
 #define FALSE 0
 
-int print_files(char *dirname);
-char *parse_args(int ac, char *argv[]);
+/**
+  * struct cmd_s - Holds a struct of directory entries, and flags
+  * @num_flags: asdf
+  * @flags: asdf
+  * @num_ents: asd
+  * @dirents: asd
+  * @dirpaths: asd
+  */
+typedef struct cmd_s
+{
+	/* Flags */
+	unsigned int num_flags;
+	char **flags;
+
+	/* Dirents */
+	unsigned int num_ents;
+	struct stat **dirents;
+	char **dirpaths;
+} cmd_struct;
+
+typedef struct stat files_stat;
+
+/* Files */
+int print_files(struct stat *dirent, char *filepath);
+int print_dirs(char *dirpath);
+
+/* Args */
+cmd_struct *parse_args(int ac, char *argv[]);
+void free_cmd_struct(cmd_struct *args);
+
+/* Utils */
+unsigned int _strlen(char *str);
+void _bzero(void *buf, size_t n);
 #endif

@@ -2,8 +2,8 @@
 # debug usage: make DEBUG=1
 
 CC=gcc
-SRC=files.c init.c main.c parse_args.c
-INC=hls.h
+SRC=files.c main.c parse_args.c utils.c
+INC=hls.h error_codes.h
 OBJ=$(SRC:.c=.o)
 NAME=ls.0.1
 CFLAGS=-Wall -Werror -Wextra -pedantic

@@ -26,14 +26,29 @@ int validate_flags(char *flag)
 }
 
 /**
-  * verify_files - checks if the supplied files exist
+  * check_dirent - checks if the supplied files exist
   * @filepath: the path to the file
   * Return: TRUE or FALSE (1 or 0)
   **/
-int verify_files(char *filepath)
+files_stat *check_dirent(char *filepath)
 {
-	filepath++;
-	return (TRUE);
+	struct stat *stat_buf;
+	int status;
+
+	stat_buf = malloc(sizeof(struct stat));
+	if (!stat_buf)
+	{
+		perror("BAD DOG");
+		return (NULL);
+	}
+	_bzero((void *)stat_buf, sizeof(struct stat));
+	status = lstat(filepath, stat_buf);
+	if (status == -1)
+	{
+		perror("You are wrong");
+		return (NULL);
+	}
+	return (stat_buf);
 }
 
 /**
@@ -42,27 +57,120 @@ int verify_files(char *filepath)
   * @argv: Argument vectors
   * Return: TRUE or FALSE (1 or 0)
   **/
-char *parse_args(int ac, char *argv[])
+cmd_struct *parse_args(int ac, char *argv[])
 {
 	int i;
+	unsigned int num_flags = 0;
+	unsigned int num_ents = 0;
 
-	for (i = 0; i < ac; i++)
+	cmd_struct *args;
+
+#ifndef NO_DEBUG
+printf("in cmd_struct *parse_args\n\n");
+printf("step one: malloc");
+getchar();
+#endif
+	args = malloc(sizeof(cmd_struct));
+	if (!args)
+	{
+		perror("WHYY malloc?!?");
+		return (NULL);
+	}
+	_bzero(args, sizeof(cmd_struct));
+#ifndef NO_DEBUG
+printf("step two: count args");
+getchar();
+#endif
+	for (i = 1; i < ac; i++)
 	{
 		if (argv[i][0] == '-')
-		{
-#ifdef DEBUG
-			printf("%s\n", argv[i][0]);
+			num_flags++;
+		else
+			num_ents++;
+	}
+
+#ifndef NO_DEBUG
+printf("step three: start malloc-ing");
+getchar();
 #endif
-			if (validate_flags(argv[i]) == FALSE)
-				return (print_usage());
-		}
+	args->flags = malloc(sizeof(char *) * num_flags + 1);
+	if (!args->flags)
+		return (NULL);
+	_bzero(args->flags, sizeof(char *) * num_flags + 1);
+
+	args->dirents = malloc(sizeof(struct stat) * num_ents + 1);
+	if (!args->dirents)
+		return (NULL);
+	_bzero(args->dirents, sizeof(char *) * num_ents + 1);
+
+	args->dirpaths = malloc(sizeof(struct stat) * num_ents + 1);
+	if (!args->dirpaths)
+		return (NULL);
+	_bzero(args->dirpaths, sizeof(char *) * num_ents + 1);
+
+	args->num_flags = num_flags;
+	args->num_ents = num_ents;
+
+#ifndef NO_DEBUG
+printf("step four: done malloc-ing");
+getchar();
+#endif
+
+	for (i = 1; i < ac; i++)
+	{
+#ifndef NO_DEBUG
+		printf("step five: start to fill_struct: %d", i);
+		getchar();
+#endif
+		if (argv[i][0] == '-')
+			args->flags[num_flags--] = argv[i];
 		else
 		{
-			if (verify_files(argv[i]) == FALSE)
-				return (print_usage());
+			args->dirents[num_ents] = check_dirent(argv[i]);
+			args->dirpaths[num_ents--] = argv[i];
 		}
-		/* Fill cmd_args struct */
-
 	}
-	return ("tests");
+	return (args);
+}
+
+
+/**
+  * free_cmd_struct - Frees the command structure from memory
+  * @args: The command structure
+  **/
+void free_cmd_struct(cmd_struct *args)
+{
+	struct stat *dirent;
+	char *flag;
+
+#ifndef NO_DEBUG
+		printf("###Entering free_cmd_struct fxn###");
+#endif
+	while ((dirent = args->dirents[args->num_ents--]))
+	{
+#ifndef NO_DEBUG
+		printf("num_ents: %d\n", args->num_ents);
+		printf("dirpath: %s\n", args->dirpaths[args->num_ents]);
+#endif
+		free(dirent);
+		printf("$$$$$$$$$$$$$$$$$$$$$$$$$$");
+		free(args->dirpaths[args->num_ents]);
+		printf("$$$$$$$$$$$$$$$$$$$$$$$$$$");
+		dirent = NULL;
+		args->dirpaths[args->num_ents] = NULL;
+	}
+	free(args->dirents);
+	args->dirents = NULL;
+
+	while ((flag = args->flags[args->num_flags]))
+	{
+		free(flag);
+		flag = NULL;
+		args->num_flags--;
+	}
+	free(args->flags);
+	args->flags = NULL;
+
+	free(args);
+	args = NULL;
 }
