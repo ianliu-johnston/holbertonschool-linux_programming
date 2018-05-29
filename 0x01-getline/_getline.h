@@ -1,9 +1,13 @@
 #ifndef GETLINE_H
 #define GETLINE_H
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+
+#include "utils.h"
 
 #define LINE_ENDINGS "\n\r\v"
 #define READ_SIZE 1024
-unsigned int _strcspn(char *haystack, const char *needle);
 char *_getline(int fd);
 
 #endif

@@ -7,19 +7,15 @@
 
 /**
  * main - entry point.
- * @ac: argument count
- * @argv: argument vector array
+ *
  * Return: always 0.
  */
-int main(int ac, char *argv[])
+int main(void)
 {
 	int fd;
 	char *line;
 
-	if (ac != 2)
-		fd = open("main.c", 0);
-	else
-		fd = open(argv[1], 0);
+	fd = open("_getline.c", 0);
 	while ((line = _getline(fd)))
 	{
 		printf("%s\n", line);
@@ -28,10 +24,3 @@ int main(int ac, char *argv[])
 	close(fd);
 	return (0);
 }
-
-/*
- * Additional tests:
- *  Carriage Return
- *  Vertical Tab
- *
- */

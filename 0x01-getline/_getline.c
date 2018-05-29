@@ -1,30 +1,5 @@
-#include <stdio.h>
-
-#include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
 #include "_getline.h"
-
-/**
-  * _strcspn - Get the length of a string without a set of characters
-  * @haystack: string to search in
-  * @needle: characters to search for
-  * Return: pointer to first instance of any character
-  *         in needle or NULL if not found
- **/
-unsigned int _strcspn(char *haystack, const char *needle)
-{
-	unsigned int i, j;
-
-	if (haystack == NULL || needle == NULL)
-		return (0);
-	for (i = 0; needle[i] != '\0'; i++)
-		for (j = 0; haystack[j] != '\0'; j++)
-			if (needle[i] == haystack[j])
-				return (j);
-	return (0);
-}
-
 
 /**
   * _getline - get characters until a newline
