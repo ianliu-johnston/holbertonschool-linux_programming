@@ -1,30 +1,5 @@
-#include <stdio.h>
-
-#include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
 #include "_getline.h"
-
-/**
-  * _strcspn - Get the length of a string without a set of characters
-  * @haystack: string to search in
-  * @needle: characters to search for
-  * Return: pointer to first instance of any character
-  *         in needle or NULL if not found
- **/
-unsigned int _strcspn(char *haystack, const char *needle)
-{
-	unsigned int i, j;
-
-	if (haystack == NULL || needle == NULL)
-		return (0);
-	for (i = 0; needle[i] != '\0'; i++)
-		for (j = 0; haystack[j] != '\0'; j++)
-			if (needle[i] == haystack[j])
-				return (j);
-	return (0);
-}
-
 
 /**
   * _getline - get characters until a newline
@@ -33,27 +8,40 @@ unsigned int _strcspn(char *haystack, const char *needle)
   */
 char *_getline(const int fd)
 {
-	static char buf[READ_SIZE];
-	char *line;
-	unsigned int index;
-	int bytes_read = 0;
+	char buf[BUFSIZE];
+	char readbuf[READ_SIZE];
+	/*
+*	char *line_endings = "\n\r\v";
+	*/
 	static size_t bytes_total;
-	static size_t offset;
 
-	if (bytes_total <= offset || bytes_total == 0)
+	int bytes_read = 0;
+	unsigned int j = 0;
+	unsigned int index = 0;
+	unsigned int index_of_nl = READ_SIZE;
+	char *line;
+
+	while (index_of_nl == READ_SIZE)
 	{
-		bytes_read = read(fd, buf, READ_SIZE);
+		bytes_read = read(fd, readbuf, READ_SIZE);
+		printf("readbuf <%s>\n", readbuf);
 		if (bytes_read <= 0) /* if eof, zero out buffer. */
 		{
-			memset(buf, '\0', READ_SIZE);
+			memset(buf, '\0', BUFSIZE);
 			return (NULL);
 		}
 		bytes_total += bytes_read;
+		for (j = 0; readbuf[j] != '\n' && j < READ_SIZE; j++)
+			;
+		readbuf[j] = '\0';
+		index_of_nl = j;
+		for (j = 0; j <= index_of_nl; j++)
+			buf[index + j] = readbuf[j];
+		index += index_of_nl;
 	}
-	index = _strcspn(buf + offset, LINE_ENDINGS);
+	buf[index] = '\0';
 	line = malloc((index + 1) * sizeof(char));
-	line = strncpy(line, buf + offset, index);
+	line = strncpy(line, buf, index);
 	line[index] = '\0';
-	offset += index + 1;
 	return (line);
 }
