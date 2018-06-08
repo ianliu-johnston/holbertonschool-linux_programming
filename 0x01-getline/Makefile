@@ -15,7 +15,7 @@ CFLAGS=-Wall -Werror -Wextra -pedantic -I $(INC_DIR)
 
 DEBUG=0
 ifeq ($(DEBUG),1)
-	SRC += debugging_fxns.c
+#	SRC += debugging_fxns.c
 	CFLAGS += -g
 else
 	CFLAGS += -DNO_DEBUG

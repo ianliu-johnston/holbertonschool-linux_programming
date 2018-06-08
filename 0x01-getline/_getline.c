@@ -8,27 +8,40 @@
   */
 char *_getline(const int fd)
 {
-	static char buf[READ_SIZE];
-	char *line;
-	unsigned int index;
-	int bytes_read = 0;
+	char buf[BUFSIZE];
+	char readbuf[READ_SIZE];
+	/*
+*	char *line_endings = "\n\r\v";
+	*/
 	static size_t bytes_total;
-	static size_t offset;
 
-	if (bytes_total <= offset || bytes_total == 0)
+	int bytes_read = 0;
+	unsigned int j = 0;
+	unsigned int index = 0;
+	unsigned int index_of_nl = READ_SIZE;
+	char *line;
+
+	while (index_of_nl == READ_SIZE)
 	{
-		bytes_read = read(fd, buf, READ_SIZE);
+		bytes_read = read(fd, readbuf, READ_SIZE);
+		printf("readbuf <%s>\n", readbuf);
 		if (bytes_read <= 0) /* if eof, zero out buffer. */
 		{
-			memset(buf, '\0', READ_SIZE);
+			memset(buf, '\0', BUFSIZE);
 			return (NULL);
 		}
 		bytes_total += bytes_read;
+		for (j = 0; readbuf[j] != '\n' && j < READ_SIZE; j++)
+			;
+		readbuf[j] = '\0';
+		index_of_nl = j;
+		for (j = 0; j <= index_of_nl; j++)
+			buf[index + j] = readbuf[j];
+		index += index_of_nl;
 	}
-	index = _strcspn(buf + offset, LINE_ENDINGS);
+	buf[index] = '\0';
 	line = malloc((index + 1) * sizeof(char));
-	line = strncpy(line, buf + offset, index);
+	line = strncpy(line, buf, index);
 	line[index] = '\0';
-	offset += index + 1;
 	return (line);
 }

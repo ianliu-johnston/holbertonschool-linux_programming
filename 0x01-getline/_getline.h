@@ -7,7 +7,8 @@
 #include "utils.h"
 
 #define LINE_ENDINGS "\n\r\v"
-#define READ_SIZE 1024
+#define READ_SIZE 4
+#define BUFSIZE 1024
 char *_getline(int fd);
 
 #endif

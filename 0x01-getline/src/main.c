@@ -7,15 +7,19 @@
 
 /**
  * main - entry point.
- *
+ * @ac: arg count
+ * @av: arg vectors
  * Return: always 0.
  */
-int main(void)
+int main(int ac, char *av[])
 {
 	int fd;
 	char *line;
+	char *filename = "testings";
 
-	fd = open("_getline.c", 0);
+	if (ac > 1)
+		filename = av[1];
+	fd = open(filename, 0);
 	while ((line = _getline(fd)))
 	{
 		printf("%s\n", line);
